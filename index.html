@@ -7,6 +7,16 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- 加载动画 -->
+  <div id="loading">
+    <div class="spinner-container">
+      <svg class="android-spinner" width="44" height="44" viewBox="0 0 44 44">
+        <circle class="spinner-path" cx="22" cy="22" r="20" fill="none" stroke-width="4"/>
+      </svg>
+    </div>
+    <div class="loaded-text">页面加载中...</div>
+  </div>
+  
   <!-- 顶部菜单栏 -->
   <header class="topbar">
     <a class="topbar-icon" aria-label="主页" href="/">
@@ -65,5 +75,6 @@
     }
     window.addEventListener('DOMContentLoaded', updatePageInfo);
   </script>
+  <script src="animation.js"></script>
 </body>
 </html>
