@@ -24,6 +24,7 @@
       <img id="adminAvatarPreview" src="" alt="头像预览" style="width:70px;height:70px;border-radius:50%;display:block;margin:8px 0;">
       <label>我的名字：<input type="text" id="adminNameInput"></label>
       <label>简介：<input type="text" id="adminDescInput"></label>
+      <label>主页 GitHub 按钮链接：<input type="text" id="adminGithubLinkInput" placeholder="如：https://github.com/yourname/yourrepo"></label>
       <label>菜单栏标题：<input type="text" id="adminMenuTitleInput"></label>
       <label style="display:flex;align-items:center;gap:8px;">
         主题主色（十六进制）：
@@ -62,6 +63,7 @@
     function updatePanel() {
       document.getElementById('adminNameInput').value = localStorage.getItem('adminName') || '我的名字';
       document.getElementById('adminDescInput').value = localStorage.getItem('adminDesc') || '一句简短的自我介绍，例如：Android开发者｜热爱设计与技术';
+      document.getElementById('adminGithubLinkInput').value = localStorage.getItem('adminGithubLink') || '';
       document.getElementById('adminMenuTitleInput').value = localStorage.getItem('adminMenuTitle') || '我的主页';
       document.getElementById('adminThemeColorInput').value = localStorage.getItem('adminThemeColor') || '#3F51B5';
       document.getElementById('adminNewPasswordInput').value = '';
@@ -74,6 +76,7 @@
       localStorage.setItem('adminAvatar', document.getElementById('adminAvatarPreview').src);
       localStorage.setItem('adminName', document.getElementById('adminNameInput').value.trim() || '我的名字');
       localStorage.setItem('adminDesc', document.getElementById('adminDescInput').value.trim() || '');
+      localStorage.setItem('adminGithubLink', document.getElementById('adminGithubLinkInput').value.trim() || '');
       localStorage.setItem('adminMenuTitle', document.getElementById('adminMenuTitleInput').value.trim() || '我的主页');
       localStorage.setItem('adminThemeColor', document.getElementById('adminThemeColorInput').value || '#3F51B5');
       const newPwd = document.getElementById('adminNewPasswordInput').value;
