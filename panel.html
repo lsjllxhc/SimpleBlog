@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>控制面板</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.min.css" rel="stylesheet"/>
+</head>
+<body>
+  <header class="topbar">
+    <a class="topbar-icon" aria-label="主页" href="index.html">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none">
+        <path d="M3 11.5L12 4L21 11.5V20A1 1 0 0 1 20 21H4A1 1 0 0 1 3 20V11.5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 21V14H15V21" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="topbar-title">控制面板</div>
+  </header>
+  <div class="container">
+    <div class="panel-card">
+      <div class="admin-panel-title" style="font-weight:bold;margin-bottom:16px;">控制面板</div>
+      <label>更换头像：<input type="file" id="avatarInput" accept="image/*"></label>
+      <img id="adminAvatarPreview" src="" alt="头像预览" style="width:70px;height:70px;border-radius:50%;display:block;margin:8px 0;">
+      <label>我的名字：<input type="text" id="adminNameInput"></label>
+      <label>简介：<input type="text" id="adminDescInput"></label>
+      <label>菜单栏标题：<input type="text" id="adminMenuTitleInput"></label>
+      <label style="display:flex;align-items:center;gap:8px;">
+        主题主色（十六进制）：
+        <input type="color" id="adminThemeColorInput">
+        <button type="button" id="resetThemeColorBtn" style="padding:4px 12px;">重置</button>
+      </label>
+      <label>新密码：<input type="password" id="adminNewPasswordInput" placeholder="输入新密码"></label>
+      <div style="margin-top:15px;">
+        <button id="adminSaveBtn">保存修改</button>
+        <button type="button" onclick="sessionStorage.removeItem('adminLoggedIn');location.href='login.html'">退出登录</button>
+        <a href="index.html" style="margin-left:10px;"><button type="button">返回主页</button></a>
+      </div>
+    </div>
+  </div>
+  <!-- 头像裁剪弹窗 -->
+  <div id="avatarCropModal">
+    <div class="cropper-dialog">
+      <div style="margin-bottom:10px;font-weight:bold;">编辑头像</div>
+      <div style="max-width:320px;">
+        <img id="cropperImage" style="max-width:100%;max-height:300px;">
+      </div>
+      <div class="cropper-toolbar">
+        <button id="rotateLeftBtn" type="button">左转90°</button>
+        <button id="rotateRightBtn" type="button">右转90°</button>
+        <button id="cropConfirmBtn" type="button" style="background:#3F51B5;color:#fff;border-radius:5px;">确定</button>
+        <button id="cropCancelBtn" type="button">取消</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.1/dist/cropper.min.js"></script>
+  <script>
+    // 权限检查
+    if(!sessionStorage.getItem('adminLoggedIn')) location.href='login.html';
+
+    // 初始化控制面板
+    function updatePanel() {
+      document.getElementById('adminNameInput').value = localStorage.getItem('adminName') || '我的名字';
+      document.getElementById('adminDescInput').value = localStorage.getItem('adminDesc') || '一句简短的自我介绍，例如：Android开发者｜热爱设计与技术';
+      document.getElementById('adminMenuTitleInput').value = localStorage.getItem('adminMenuTitle') || '我的主页';
+      document.getElementById('adminThemeColorInput').value = localStorage.getItem('adminThemeColor') || '#3F51B5';
+      document.getElementById('adminNewPasswordInput').value = '';
+      document.getElementById('avatarInput').value = '';
+      document.getElementById('adminAvatarPreview').src = localStorage.getItem('adminAvatar') || 'https://avatars.githubusercontent.com/u/1?v=4';
+      document.documentElement.style.setProperty('--primary', localStorage.getItem('adminThemeColor') || '#3F51B5');
+    }
+    window.onload = updatePanel;
+    document.getElementById('adminSaveBtn').onclick = function () {
+      localStorage.setItem('adminAvatar', document.getElementById('adminAvatarPreview').src);
+      localStorage.setItem('adminName', document.getElementById('adminNameInput').value.trim() || '我的名字');
+      localStorage.setItem('adminDesc', document.getElementById('adminDescInput').value.trim() || '');
+      localStorage.setItem('adminMenuTitle', document.getElementById('adminMenuTitleInput').value.trim() || '我的主页');
+      localStorage.setItem('adminThemeColor', document.getElementById('adminThemeColorInput').value || '#3F51B5');
+      const newPwd = document.getElementById('adminNewPasswordInput').value;
+      if (newPwd) {
+        localStorage.setItem('adminPassword', newPwd);
+        alert('新密码已设置！');
+        document.getElementById('adminNewPasswordInput').value = '';
+      }
+      alert('保存成功！');
+    };
+    document.getElementById('resetThemeColorBtn').onclick = function () {
+      var defaultColor = '#3F51B5';
+      var input = document.getElementById('adminThemeColorInput');
+      input.value = defaultColor;
+      localStorage.setItem('adminThemeColor', defaultColor);
+      document.documentElement.style.setProperty('--primary', defaultColor);
+    };
+
+    // 头像裁剪
+    let cropper = null;
+    const avatarInput = document.getElementById('avatarInput');
+    const cropModal = document.getElementById('avatarCropModal');
+    const cropperImage = document.getElementById('cropperImage');
+    const cropConfirmBtn = document.getElementById('cropConfirmBtn');
+    const cropCancelBtn = document.getElementById('cropCancelBtn');
+    const rotateLeftBtn = document.getElementById('rotateLeftBtn');
+    const rotateRightBtn = document.getElementById('rotateRightBtn');
+    const avatarPreview = document.getElementById('adminAvatarPreview');
+
+    avatarInput.onchange = function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (evt) {
+        cropperImage.src = evt.target.result;
+        cropModal.style.display = 'flex';
+        if (cropper) { cropper.destroy(); }
+        cropperImage.onload = function () {
+          cropper = new Cropper(cropperImage, {
+            aspectRatio: 1,
+            viewMode: 1,
+            background: false,
+            autoCropArea: 1,
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+    rotateLeftBtn.onclick = function () {
+      if (cropper) cropper.rotate(-90);
+    };
+    rotateRightBtn.onclick = function () {
+      if (cropper) cropper.rotate(90);
+    };
+    cropConfirmBtn.onclick = function () {
+      if (!cropper) return;
+      const canvas = cropper.getCroppedCanvas({
+        width: 200, height: 200, imageSmoothingQuality: 'high'
+      });
+      avatarPreview.src = canvas.toDataURL('image/png');
+      cropper.destroy();
+      cropper = null;
+      cropModal.style.display = 'none';
+    };
+    cropCancelBtn.onclick = function () {
+      if (cropper) { cropper.destroy(); cropper = null; }
+      cropModal.style.display = 'none';
+    };
+  </script>
+</body>
+</html>
