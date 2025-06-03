@@ -37,7 +37,7 @@
     <div class="subtitle">一句简短的自我介绍，例如：Android开发者｜热爱设计与技术</div>
     <p>这里可以写一段更详细的介绍，分享你的技能、兴趣或正在做的事情。</p>
     <div class="links">
-      <a href="https://github.com/lsjllxhc" target="_blank">GitHub</a>
+      <a id="githubBtn" href="https://github.com/lsjllxhc" target="_blank">GitHub</a>
     </div>
   </div>
   <script>
@@ -61,6 +61,7 @@
       document.querySelector('.subtitle').textContent = localStorage.getItem('adminDesc') || '一句简短的自我介绍，例如：Android开发者｜热爱设计与技术';
       document.querySelector('.topbar-title').textContent = localStorage.getItem('adminMenuTitle') || '我的主页';
       document.documentElement.style.setProperty('--primary', localStorage.getItem('adminThemeColor') || '#3F51B5');
+      document.getElementById('githubBtn').href = localStorage.getItem('adminGithubLink') || 'https://github.com/lsjllxhc';
     }
     window.addEventListener('DOMContentLoaded', updatePageInfo);
   </script>
