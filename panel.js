@@ -6,11 +6,13 @@ if(!sessionStorage.getItem('adminLoggedIn')) location.href='login.html';
 function updatePanel() {
   document.getElementById('adminNameInput').value = localStorage.getItem('adminName') || '我的名字';
   document.getElementById('adminDescInput').value = localStorage.getItem('adminDesc') || '一句简短的自我介绍，例如：Android开发者｜热爱设计与技术';
-  document.getElementById(' = localStorage.getItem('adminMenuTitle') || '我的主页';
+  document.getElementById('adminGithubLinkInput').value = localStorage.getItem('adminGithubLink') || '';
+  document.getElementById('adminMenuTitleInput').value = localStorage.getItem('adminMenuTitle') || '我的主页';
   document.getElementById('adminThemeColorInput').value = localStorage.getItem('adminThemeColor') || '#3F51B5';
   document.getElementById('adminNewPasswordInput').value = '';
   document.getElementById('avatarInput').value = '';
   document.getElementById('adminAvatarPreview').src = localStorage.getItem('adminAvatar') || 'https://avatars.githubusercontent.com/u/1?v=4';
+  document.documentElement.style.setProperty('--primary', localStorage.getItem('adminThemeColor') || '#3F51B5');
 }
 window.onload = updatePanel;
 
@@ -19,6 +21,7 @@ document.getElementById('adminSaveBtn').onclick = function () {
   localStorage.setItem('adminAvatar', document.getElementById('adminAvatarPreview').src);
   localStorage.setItem('adminName', document.getElementById('adminNameInput').value.trim() || '我的名字');
   localStorage.setItem('adminDesc', document.getElementById('adminDescInput').value.trim() || '');
+  localStorage.setItem('adminGithubLink', document.getElementById('adminGithubLinkInput').value.trim() || '');
   localStorage.setItem('adminMenuTitle', document.getElementById('adminMenuTitleInput').value.trim() || '我的主页');
   localStorage.setItem('adminThemeColor', document.getElementById('adminThemeColorInput').value || '#3F51B5');
   const newPwd = document.getElementById('adminNewPasswordInput').value;
@@ -30,8 +33,7 @@ document.getElementById('adminSaveBtn').onclick = function () {
   alert('保存成功！');
 };
 
-// --- 主题主色“重置”按钮 ---
-document.getElementById('resetThemeColorBtn').onclick = function () {
+// --- 主题主色“重ElementById('resetThemeColorBtn').onclick = function () {
   var defaultColor = '#3F51B5';
   var input = document.getElementById('adminThemeColorInput');
   input.value = defaultColor;
@@ -72,8 +74,7 @@ avatarInput.onchange = function (e) {
 rotateLeftBtn.onclick = function () {
   if (cropper) cropper.rotate(-90);
 };
-rotateRightBtn.onclick = function () {
-  if (cropper) cropper.rotate(90);
+rotateRightBtn) cropper.rotate(90);
 };
 cropConfirmBtn.onclick = function () {
   if (!cropper) return;
